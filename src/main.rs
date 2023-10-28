@@ -21,7 +21,7 @@ pub struct Db(diesel::PgConnection);
 
 #[derive(Serialize, Deserialize, Clone, Queryable, Debug, Insertable)]
 #[table_name = "blog_posts"]
-struct BlogPost {
+pub struct BlogPost {
     id: i32,
     title: String,
     body: String,
@@ -86,6 +86,8 @@ fn custom(config: &State<Config>) -> String {
     format!("Hello, {}! You are {} years old.", config.name, config.age)
 }
 
+mod testing;
+
 #[launch]
 fn rocket() -> _ {
     let rocket = rocket::build();
@@ -101,6 +103,14 @@ fn rocket() -> _ {
                 get_blog_post,
                 get_all_blog_posts,
                 create_blog_post
+            ],
+        )
+        .mount(
+            "/testing",
+            routes![
+                testing::testing_world::index,
+                testing::testing_world::get_all_blog_posts,
+                testing::abc::file_a::file_a_func,
             ],
         )
 }
